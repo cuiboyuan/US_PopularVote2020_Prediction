@@ -73,7 +73,6 @@ model_trump <- glm(vote_trump ~ age + gender + state + race + education_level + 
 # Model Results (to Report in Results section)
 # summary(model)
 # OR
- broom::tidy(model_trump)
  
  # Creating the Model
 model_biden <- glm(vote_biden ~ age + gender + state + race + education_level + income_level, 
@@ -82,8 +81,8 @@ model_biden <- glm(vote_biden ~ age + gender + state + race + education_level + 
 # Model Results (to Report in Results section)
 # summary(model)
 # OR
- broom::tidy(model_biden)
-
+broom::tidy(model_biden)
+broom::tidy(model_trump)
 ```
 
 ## Post-Stratification 
