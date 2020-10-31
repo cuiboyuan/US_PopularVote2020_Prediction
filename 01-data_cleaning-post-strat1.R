@@ -23,7 +23,7 @@ raw_data <- labelled::to_factor(raw_data)
 reduced_data <- 
   raw_data %>% 
   select(#region,
-         stateicp,
+         statefip,
          sex, 
          age, 
          race, 
@@ -53,8 +53,9 @@ reduced_data <- reduced_data %>% filter(educd!="n/a" & empstat!="n/a")
 
 reduced_data <- 
   reduced_data %>% 
-  replace(age == "less than 1 year old", 0) %>%
-  replace(age == "90 (90+ in 1980 and 1990)", 90)
+  replace(age == "less than 1 year old", 0)
+
+#%>%  replace(age == "90 (90+ in 1980 and 1990)", 90)
 
 reduced_data$age <- as.integer(reduced_data$age)
 
@@ -73,8 +74,6 @@ edu_lvl <- replace(edu_lvl, edu_lvl<=23 & edu_lvl>18, 200)
 edu_lvl <- replace(edu_lvl, edu_lvl<=18 & edu_lvl>10, 100)
 edu_lvl <- replace(edu_lvl, edu_lvl<=10, 0)
 edu_lvl <- edu_lvl/100
-
-edu_lvl
 
 reduced_data <- reduced_data %>% mutate(education_level=edu_lvl)
 
