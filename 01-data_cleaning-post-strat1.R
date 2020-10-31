@@ -23,7 +23,7 @@ raw_data <- labelled::to_factor(raw_data)
 reduced_data <- 
   raw_data %>% 
   select(#region,
-         #stateicp,
+         stateicp,
          sex, 
          age, 
          race, 
@@ -62,16 +62,19 @@ attach(reduced_data)
 
 edu_lvl <- as.numeric(educd) %>% as.integer()
 
-edu_lvl <- replace(edu_lvl, edu_lvl>=43, 10)
-edu_lvl <- replace(edu_lvl, edu_lvl<=42, 9)
-edu_lvl <- replace(edu_lvl, edu_lvl<=36, 7)
-edu_lvl <- replace(edu_lvl, edu_lvl<=31, 6)
-edu_lvl <- replace(edu_lvl, edu_lvl<=29, 5)
-edu_lvl <- replace(edu_lvl, edu_lvl<=26, 4)
-edu_lvl <- replace(edu_lvl, edu_lvl<=25, 3)
-edu_lvl <- replace(edu_lvl, edu_lvl<=23, 2)
-edu_lvl <- replace(edu_lvl, edu_lvl<=18, 1)
+edu_lvl <- replace(edu_lvl, edu_lvl>=43, 1000)
+edu_lvl <- replace(edu_lvl, edu_lvl<=42 & edu_lvl>36, 900)
+edu_lvl <- replace(edu_lvl, edu_lvl<=36 & edu_lvl>31, 700)
+edu_lvl <- replace(edu_lvl, edu_lvl<=31 & edu_lvl>29, 600)
+edu_lvl <- replace(edu_lvl, edu_lvl<=29 & edu_lvl>26, 500)
+edu_lvl <- replace(edu_lvl, edu_lvl==26, 400)
+edu_lvl <- replace(edu_lvl, edu_lvl<=25 & edu_lvl>23, 300)
+edu_lvl <- replace(edu_lvl, edu_lvl<=23 & edu_lvl>18, 200)
+edu_lvl <- replace(edu_lvl, edu_lvl<=18 & edu_lvl>10, 100)
 edu_lvl <- replace(edu_lvl, edu_lvl<=10, 0)
+edu_lvl <- edu_lvl/100
+
+edu_lvl
 
 reduced_data <- reduced_data %>% mutate(education_level=edu_lvl)
 

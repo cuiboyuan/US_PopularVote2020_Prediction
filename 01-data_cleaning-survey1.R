@@ -100,8 +100,6 @@ reduced_data$employment <- employ
 
 inc_lvl <- as.numeric(household_income)-1
 reduced_data <- reduced_data %>% mutate(income_level=inc_lvl)
-
-
 detach(reduced_data)
 
 # Saving the survey/sample data as a csv file in my
