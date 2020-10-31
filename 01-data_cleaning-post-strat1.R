@@ -51,40 +51,37 @@ reduced_data <- reduced_data %>% na.omit()
 
 reduced_data <- reduced_data %>% filter(educd!="n/a" & empstat!="n/a")
 
-
-reduced_data <- 
-  reduced_data %>%
-  count(age) %>%
-  group_by(age) 
-typeof(reduced_data$age)
-
 reduced_data <- 
   reduced_data %>% 
-  filter(age != "less than 1 year old") %>%
-  filter(age != "90 (90+ in 1980 and 1990)")
+  replace(age == "less than 1 year old", 0) %>%
+  replace(age == "90 (90+ in 1980 and 1990)", 90)
 
 reduced_data$age <- as.integer(reduced_data$age)
-
-
-
-
 
 attach(reduced_data)
 
 edu_lvl <- as.numeric(educd) %>% as.integer()
-tmp <- data.frame(name=as.character(educd),edu_lvl)
-tmp %>% group_by(name) %>% summarise(n=mean(edu_lvl))
 
 edu_lvl <- replace(edu_lvl, edu_lvl>=43, 10)
 edu_lvl <- replace(edu_lvl, edu_lvl<=42, 9)
-edu_lvl <- replace(edu_lvl, edu_lvl<=41, )
 edu_lvl <- replace(edu_lvl, edu_lvl<=36, 7)
 edu_lvl <- replace(edu_lvl, edu_lvl<=31, 6)
+edu_lvl <- replace(edu_lvl, edu_lvl<=29, 5)
+edu_lvl <- replace(edu_lvl, edu_lvl<=26, 4)
+edu_lvl <- replace(edu_lvl, edu_lvl<=25, 3)
+edu_lvl <- replace(edu_lvl, edu_lvl<=23, 2)
+edu_lvl <- replace(edu_lvl, edu_lvl<=18, 1)
+edu_lvl <- replace(edu_lvl, edu_lvl<=10, 0)
 
-
+reduced_data <- reduced_data %>% mutate(education_level=edu_lvl)
 
 detach(reduced_data)
 
+
+reduced_data <- 
+  reduced_data %>%
+  count(age) %>%
+  group_by(age)
 
 # Saving the census data as a csv file
 write_csv(reduced_data, "outputs/census_data.csv")
