@@ -111,7 +111,7 @@ reduced_data$state <- states
                    
 
 attach(reduced_data)
-race <- case_when(race_ethnicity=="White"~"white",
+races <- case_when(race_ethnicity=="White"~"white",
                   race_ethnicity=="Black, or African American"~"black/african american/negro",
                   race_ethnicity=="American Indian or Alaska Native"~"american indian or alaska native",
                   race_ethnicity=="Asian (Chinese)"~"chinese",
@@ -127,7 +127,7 @@ race <- case_when(race_ethnicity=="White"~"white",
                   race_ethnicity=="Asian (Other)"~"other asian or pacific islander",
                   race_ethnicity=="Some other race"~"other race, nec"
                   )
-reduced_data$race_ethnicity <- race
+reduced_data$race_ethnicity <- races
 
 edu_lvl <- case_when(education=="3rd Grade or less"~0,
                      education=="Middle School - Grades 4 - 8"~1,

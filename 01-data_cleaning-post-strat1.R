@@ -104,6 +104,10 @@ inc_lvl <- case_when(inctot<15000~0,
                      )
 reduced_data <- reduced_data %>% mutate(income_level=inc_lvl)
 
+reduced_data$race <- case_when(race=="two major races"~"other race, nec",
+                                           race=="three or more major races"~"other race, nec",
+                                           TRUE~as.character(race))
+
 detach(reduced_data)
 
 reduced_data <- reduced_data %>% rename(state=statefip, gender=sex)
