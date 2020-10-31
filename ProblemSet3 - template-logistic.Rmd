@@ -1,7 +1,7 @@
 ---
-title: "Title of Your Report"
-author: "Names of your Group Members"
-date: "Due Date"
+title: "Prediction Analysis on the U.S. 2020 Election Popular Vote"
+author: "Boyuan Cui, Zhaocheng Li"
+date: "November 2, 2020"
 output:
   pdf_document: default
   html_document:
@@ -12,30 +12,57 @@ output:
 library(tidyverse)
 
 # Loading in the cleaned survey Data
-survey_data <- read_csv("C:/Users/Sammi-Jo/Desktop/PS3/outputs/survey_data.csv")
+survey_data <- read_csv("outputs/survey_data.csv")
 
 # Loading in the cleaned census Data
-census_data <- read_csv("C:/Users/Sammi-Jo/Desktop/PS3/outputs/census_data.csv")
+census_data <- read_csv("outputs/census_data.csv")
 
 ```
 
-# Title of your Report
+# Abstract
 
-## Name(s) of Author(s) 
-## Date
+__Key Words:__ U.S. 2020 Election, Popular Vote, Post-stratification, Logistic Regression
 
+This report is an analysis to predict the outcome of U.S. 2020 federal election popular vote for Joe Biden and Donald Trump. The analysis employs the post-stratification technique by dividing the data into (number) cells according to variable age, and uses the logistic regression model to estimate the proportion of popular vote in each cell. The final result of popular vote proportion prediction is (result) for Biden and (result) for Trump.
+
+# Introduction
+
+The U.S. presidential election has always been a popular topic of the world for every four year, and as the election day for 2020 comes closer, we are all looking forward to see who will become the next U.S. president. This report is interested in predicting the U.S. 2020 election popular vote for each candidate (Joe Bide and Donald Trump).
+
+We will use the post-stratification technique in our analysis.
+
+# Data
+
+We extract the survey data from Democracy Fund + UCLA Nationscape [1] and the census data from IPUMS USA [2]. We remove all the examples with NA data from these two datasets. 
+
+The survey data is collected on June 25, 2020, and the census data is collected in 2018.
 
 # Model
 
-Here we are interested in predicting the popular vote outcome of the 2020 American federal election (include citation). To do this we are employing a post-stratification technique. In the following sub-sections I will describe the model specifics and the post-stratification calculation.
+To perform a post-stratification analysis, we need several steps:
 
+First, we need to determine which variables we will use to divide the census data into different cells. In this report, we will use variable (vars)
+
+Then, we will fit a model using these variables, and we will apply this model to each cell to estimate the probability of voting for a candidate.
+
+To finish up our post-stratification analysis, we will calculate the weighted mean $\hat{y}^{PS}$ of all cells with the formula below:
+
+$$\hat{y}^{PS}=\frac{\sum_j N_j\cdot \hat{y_j} }{\sum_j N_j}$$
+Where $N_j,\hat{y_j}$ are the total count and model estimate of each cell, respectively.
 
 ## Model Specifics
-I will (incorrectly) be using a linear regression model to model the proportion of voters who will vote for Donald Trump. This is a naive model. I will only be using age, which is recorded as a numeric variable, to model the probability of voting for Donald Trump. The simple linear regression model I am using is:
 
-$$ y = \beta_0+\beta_1  x_{age} + \epsilon$$
+For our model, because each voter either votes or does not vote for one candidate, we are handling binary data. Thus, we will apply the logistic regression model.
 
-Where $y$ represents the proportion of voters who will vote for Donald Trump. Similarly, $\beta_0$ represents the intercept of the model, and is the probability of voting for Donald Trump at age 0. Additionally, $\beta_1$ represents the slope of the model. So, for everyone one unit increase in age, we expect a $\beta_1$ increase in the probability of voting for Donald Trump.
+To analyze the proportion of voters voting for Trump/Biden, we will incorporate variables (vars) to our model. To express the model mathematically, we have:
+
+$$ \ln(\frac{p}{1-p}) = \beta_0+\beta_1  x_{age} + \epsilon$$
+
+Where $p$ represents the proportion of voters who will vote for Trump/Biden, depending on which model we are using. Value of $\epsilon$ represents the residual of our fit. Parameter $\beta_0$ represents the intercept of the model, which indicates the value of logit function $\log(\frac{p}{1-p})$ when (...). 
+
+Additionally, $\beta_1$ represents the slope of the model. So, for everyone one unit increase in age, we expect a $\beta_1$ increase in the probability of voting for Donald Trump.
+
+We will fit two models with the above formula, one for Trump and one for Biden.
 
 ```{r, include=FALSE}
 
@@ -93,5 +120,8 @@ Here you discuss subsequent work to be done after this report. This can include 
 
 # References
 
+[1] Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from https://www.voterstudygroup.org/publication/nationscape-data-set.
+
+[2] Steven Ruggles, Sarah Flood, Ronald Goeken, Josiah Grover, Erin Meyer, Jose Pacas and Matthew Sobek. IPUMS USA: Version 10.0 [dataset]. Minneapolis, MN: IPUMS, 2020. https://doi.org/10.18128/D010.V10.0
 
 
