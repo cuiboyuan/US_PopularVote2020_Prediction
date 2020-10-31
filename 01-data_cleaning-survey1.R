@@ -53,6 +53,63 @@ reduced_data<-
   mutate(vote_biden = 
            ifelse(vote_2020=="Joe Biden", 1, 0))
 
+# States name 
+attach(reduced_data)
+states = case_when(state=="AL"~ "alabama",
+                   state=="AK"~ "alaska",
+                   state=="AZ"~ "arizona",
+                   state=="AR"~ "arkansas",
+                   state=="CA"~ "california",
+                   state=="CO"~ "colorado",
+                   state=="CT"~ "connecticut",
+                   state=="DE"~ "delaware",
+                   state=="FL"~ "florida",
+                   state=="GA"~ "georgia",
+                   state=="HI"~ "hawaii",
+                   state=="ID"~ "idaho",
+                   state=="IL"~ "illinois",
+                   state=="IN"~ "indiana",
+                   state=="IA"~ "iowa",
+                   state=="KS"~ "kansas",
+                   state=="KY"~ "kentucky",
+                   state=="LA"~ "louisiana",
+                   state=="ME"~ "maine",
+                   state=="MD"~ "maryland",
+                   state=="MA"~ "massachusetts",
+                   state=="MI"~ "michigan",
+                   state=="MN"~ "minnesota",
+                   state=="MS"~ "mississippi",
+                   state=="MO"~ "missouri",
+                   state=="MT"~ "montana",
+                   state=="NE"~ "nebraska",
+                   state=="NV"~ "nevada",
+                   state=="NH"~ "new hampshire",
+                   state=="NJ"~ "new jersey",
+                   state=="NM"~ "new mexico",
+                   state=="NY"~ "new york",
+                   state=="NC"~ "north carolina",
+                   state=="ND"~ "north dakota",
+                   state=="OH"~ "ohio",
+                   state=="OK"~ "oklahoma",
+                   state=="OR"~ "oregon",
+                   state=="PA"~ "pennsylvania",
+                   state=="RI"~ "rhode island",
+                   state=="SC"~ "south carolina",
+                   state=="SD"~ "south dakota",
+                   state=="TN"~ "tennessee",
+                   state=="TX"~ "texas ",
+                   state=="UT"~ "utah ",
+                   state=="VT"~ "vermont",
+                   state=="VA"~ "virginia",
+                   state=="WA"~ "washington",
+                   state=="WV"~ "west virginia",
+                   state=="WI"~ "wisconsin",
+                   state=="WY"~ "wyoming",
+                   state=="DC" ~"district of columbia")
+                   
+    reduced_data$state <- states               
+                   
+
 attach(reduced_data)
 race <- case_when(race_ethnicity=="White"~"white",
                   race_ethnicity=="Black, or African American"~"black/african american/negro",
