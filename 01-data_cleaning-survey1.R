@@ -107,7 +107,7 @@ states = case_when(state=="AL"~ "alabama",
                    state=="WY"~ "wyoming",
                    state=="DC" ~"district of columbia")
                    
-    reduced_data$state <- states               
+reduced_data$state <- states               
                    
 
 attach(reduced_data)
@@ -154,6 +154,10 @@ employ <- case_when(employment=="Full-time employed"~"employed",
                     employment=="Other"~"not in labor force",
                     )
 reduced_data$employment <- employ
+
+reduced_data$gender <- case_when(gender=="Female"~"female",
+                                 gender=="Male"~"male"
+                                 )
 
 inc_lvl <- as.numeric(household_income)-1
 reduced_data <- reduced_data %>% mutate(income_level=inc_lvl)
