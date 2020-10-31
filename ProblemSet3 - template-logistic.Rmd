@@ -65,6 +65,7 @@ Additionally, $\beta_1$ represents the slope of the model. So, for everyone one 
 We will fit two models with the above formula, one for Trump and one for Biden.
 
 ```{r, include=FALSE}
+survey_data = within(survey_data, race <- relevel(as.factor(race), ref = 7)) # make Single marital status as reference
 
 # Creating the Model
 model_trump <- glm(vote_trump ~ age + gender + state + race + education_level + income_level, 
