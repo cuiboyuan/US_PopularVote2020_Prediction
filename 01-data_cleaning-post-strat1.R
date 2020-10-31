@@ -51,10 +51,10 @@ reduced_data <- reduced_data %>% na.omit()
 
 reduced_data <- reduced_data %>% filter(educd!="n/a" & empstat!="n/a")
 
-reduced_data <- 
-  reduced_data %>% 
-  filter(age != "less than 1 year old") %>%
-  filter(age != "90 (90+ in 1980 and 1990)")
+reduced_data$age <- 
+  case_when(reduced_data$age == "less than 1 year old"~0,
+            reduced_data$age == "90 (90+ in 1980 and 1990)"~90,
+            TRUE~as.numeric(reduced_data$age))
 
 
 reduced_data$age <- as.integer(reduced_data$age)
