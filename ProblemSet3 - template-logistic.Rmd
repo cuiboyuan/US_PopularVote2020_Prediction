@@ -67,13 +67,22 @@ We will fit two models with the above formula, one for Trump and one for Biden.
 ```{r, include=FALSE}
 
 # Creating the Model
-model <- glm(vote_trump ~ age , 
+model_trump <- glm(vote_trump ~ age + gender + state + race + education_level + income_level, 
             data=survey_data, family= "binomial")
 
 # Model Results (to Report in Results section)
 # summary(model)
 # OR
-# broom::tidy(model)
+ broom::tidy(model_trump)
+ 
+ # Creating the Model
+model_biden <- glm(vote_biden ~ age + gender + state + race + education_level + income_level, 
+            data=survey_data, family= "binomial")
+
+# Model Results (to Report in Results section)
+# summary(model)
+# OR
+ broom::tidy(model_biden)
 
 ```
 
