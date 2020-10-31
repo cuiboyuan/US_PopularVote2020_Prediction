@@ -97,8 +97,8 @@ states = case_when(state=="AL"~ "alabama",
                    state=="SC"~ "south carolina",
                    state=="SD"~ "south dakota",
                    state=="TN"~ "tennessee",
-                   state=="TX"~ "texas ",
-                   state=="UT"~ "utah ",
+                   state=="TX"~ "texas",
+                   state=="UT"~ "utah",
                    state=="VT"~ "vermont",
                    state=="VA"~ "virginia",
                    state=="WA"~ "washington",
@@ -141,7 +141,7 @@ edu_lvl <- case_when(education=="3rd Grade or less"~0,
                      education=="Masters degree"~9,
                      education=="Doctorate degree"~10
                      )
-reduced_data <- reduced_data %>% mutate(edu_level=edu_lvl)
+reduced_data <- reduced_data %>% mutate(education_level=edu_lvl)
 
 employ <- case_when(employment=="Full-time employed"~"employed",
                     employment=="Homemaker"~"not in labor force",
@@ -157,6 +157,9 @@ reduced_data$employment <- employ
 
 inc_lvl <- as.numeric(household_income)-1
 reduced_data <- reduced_data %>% mutate(income_level=inc_lvl)
+
+reduced_data <- reduced_data %>% rename(race=race_ethnicity)
+
 detach(reduced_data)
 
 # Saving the survey/sample data as a csv file in my

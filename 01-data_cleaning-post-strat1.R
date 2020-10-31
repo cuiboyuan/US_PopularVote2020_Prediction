@@ -53,9 +53,9 @@ reduced_data <- reduced_data %>% filter(educd!="n/a" & empstat!="n/a")
 
 reduced_data <- 
   reduced_data %>% 
-  replace(age == "less than 1 year old", 0)
+  filter(age != "less than 1 year old") %>%
+  filter(age != "90 (90+ in 1980 and 1990)")
 
-#%>%  replace(age == "90 (90+ in 1980 and 1990)", 90)
 
 reduced_data$age <- as.integer(reduced_data$age)
 
@@ -77,13 +77,40 @@ edu_lvl <- edu_lvl/100
 
 reduced_data <- reduced_data %>% mutate(education_level=edu_lvl)
 
+inc_lvl <- case_when(inctot<15000~0,
+                     inctot>=15000&inctot<20000~1,
+                     inctot>=20000&inctot<25000~2,
+                     inctot>=25000&inctot<30000~3,
+                     inctot>=30000&inctot<35000~4,
+                     inctot>=35000&inctot<40000~5,
+                     inctot>=40000&inctot<45000~6,
+                     inctot>=45000&inctot<50000~7,
+                     inctot>=50000&inctot<55000~8,
+                     inctot>=55000&inctot<60000~9,
+                     inctot>=60000&inctot<65000~10,
+                     inctot>=65000&inctot<70000~11,
+                     inctot>=70000&inctot<75000~12,
+                     inctot>=75000&inctot<80000~13,
+                     inctot>=80000&inctot<85000~14,
+                     inctot>=85000&inctot<90000~15,
+                     inctot>=90000&inctot<95000~16,
+                     inctot>=95000&inctot<100000~17,
+                     inctot>=100000&inctot<125000~18,
+                     inctot>=125000&inctot<150000~19,
+                     inctot>=150000&inctot<175000~20,
+                     inctot>=175000&inctot<200000~21,
+                     inctot>=200000&inctot<250000~22,
+                     inctot>=250000~23
+                     )
+reduced_data <- reduced_data %>% mutate(income_level=inc_lvl)
+
 detach(reduced_data)
 
+reduced_data <- reduced_data %>% rename(state=statefip, gender=sex)
 
-reduced_data <- 
-  reduced_data %>%
-  count(age) %>%
-  group_by(age)
+reduced_data <- reduced_data %>%
+  count(age, gender, state, race, education_level, income_level) %>%
+  group_by(age, gender, state, race, education_level, income_level)
 
 # Saving the census data as a csv file
 write_csv(reduced_data, "outputs/census_data.csv")
