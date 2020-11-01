@@ -22,45 +22,35 @@ raw_data <- labelled::to_factor(raw_data)
 # this depending on your interests)
 reduced_data <- 
   raw_data %>% 
-  select(#region,
-         statefip,
+  select(statefip,
          sex, 
          age, 
          race, 
-         #hispan,
-         #marst, 
-         #bpl,
-         #citizen,
          educd,
          educ,
-         inctot,
-         empstat
+         inctot
          )
-         #labforce,
-         #labforce)
          
 
-#### What's next? ####
+#### Here I am only splitting cells by age, gender, state, race, education, ###
+#### and income ####
 
-## Here I am only splitting cells by age, but you 
-## can use other variables to split by changing
-## count(age) to count(age, sex, ....)
-
-
+## Remove n/a data
 reduced_data <- reduced_data %>% na.omit()
+reduced_data <- reduced_data %>% filter(educd!="n/a")
 
-reduced_data <- reduced_data %>% filter(educd!="n/a" & empstat!="n/a")
-
+## Convert age all to numeric
 reduced_data$age <- 
   case_when(reduced_data$age == "less than 1 year old"~0,
             reduced_data$age == "90 (90+ in 1980 and 1990)"~90,
             TRUE~as.numeric(reduced_data$age))
 
-
 reduced_data$age <- as.integer(reduced_data$age)
+
 
 attach(reduced_data)
 
+## Convert education to numeric value of education level
 edu_lvl <- as.numeric(educd) %>% as.integer()
 
 edu_lvl <- replace(edu_lvl, edu_lvl>=43, 1000)
@@ -77,6 +67,7 @@ edu_lvl <- edu_lvl/100
 
 reduced_data <- reduced_data %>% mutate(education_level=edu_lvl)
 
+## Convert income to numeric value of income level
 inc_lvl <- case_when(inctot<15000~0,
                      inctot>=15000&inctot<20000~1,
                      inctot>=20000&inctot<25000~2,
@@ -104,19 +95,23 @@ inc_lvl <- case_when(inctot<15000~0,
                      )
 reduced_data <- reduced_data %>% mutate(income_level=inc_lvl)
 
+## Convert some race to other race, just to be consistent with the survey data
 reduced_data$race <- case_when(race=="two major races"~"other race, nec",
                                            race=="three or more major races"~"other race, nec",
                                            TRUE~as.character(race))
 
 detach(reduced_data)
 
+## Rename some variable to be consistent with the survey data
 reduced_data <- reduced_data %>% rename(state=statefip, gender=sex)
 
+## Split into cells
 reduced_data <- reduced_data %>%
   count(age, gender, state, race, education_level, income_level) %>%
   group_by(age, gender, state, race, education_level, income_level)
 
-# Saving the census data as a csv file
+
+## Saving the census data as a csv file
 write_csv(reduced_data, "outputs/census_data.csv")
 
 

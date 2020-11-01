@@ -41,8 +41,11 @@ reduced_data <-
 # Maybe make some age-groups?
 # Maybe check the values?
 # Is vote a binary? If not, what are you going to do?
+
+## Remove n/a data
 reduced_data <- reduced_data %>% na.omit()
 
+## Make vote_trump and vote_biden binary variable
 reduced_data<-
   reduced_data %>%
   mutate(vote_trump = 
@@ -53,7 +56,7 @@ reduced_data<-
   mutate(vote_biden = 
            ifelse(vote_2020=="Joe Biden", 1, 0))
 
-# States name 
+## States name 
 attach(reduced_data)
 states = case_when(state=="AL"~ "alabama",
                    state=="AK"~ "alaska",
@@ -109,8 +112,7 @@ states = case_when(state=="AL"~ "alabama",
                    
 reduced_data$state <- states               
                    
-
-attach(reduced_data)
+## Convert race to be consistent with census data
 races <- case_when(race_ethnicity=="White"~"white",
                   race_ethnicity=="Black, or African American"~"black/african american/negro",
                   race_ethnicity=="American Indian or Alaska Native"~"american indian or alaska native",
@@ -129,6 +131,7 @@ races <- case_when(race_ethnicity=="White"~"white",
                   )
 reduced_data$race_ethnicity <- races
 
+## Convert education to numeric levels
 edu_lvl <- case_when(education=="3rd Grade or less"~0,
                      education=="Middle School - Grades 4 - 8"~1,
                      education=="Completed some high school "~2,
@@ -143,6 +146,7 @@ edu_lvl <- case_when(education=="3rd Grade or less"~0,
                      )
 reduced_data <- reduced_data %>% mutate(education_level=edu_lvl)
 
+## Convert employment to be consistent with census data
 employ <- case_when(employment=="Full-time employed"~"employed",
                     employment=="Homemaker"~"not in labor force",
                     employment=="Retired"~"not in labor force",
@@ -155,18 +159,20 @@ employ <- case_when(employment=="Full-time employed"~"employed",
                     )
 reduced_data$employment <- employ
 
+## Convert gender to be consistent with census data
 reduced_data$gender <- case_when(gender=="Female"~"female",
                                  gender=="Male"~"male"
                                  )
 
+## Convert income to numeric levels
 inc_lvl <- as.numeric(household_income)-1
 reduced_data <- reduced_data %>% mutate(income_level=inc_lvl)
 
+## Rename some variable to be consistent with census data
 reduced_data <- reduced_data %>% rename(race=race_ethnicity)
 
 detach(reduced_data)
 
-# Saving the survey/sample data as a csv file in my
-# working directory
+# Saving the survey data as a csv file in outputs folder
 write_csv(reduced_data, "outputs/survey_data.csv")
 
