@@ -1,5 +1,5 @@
 ---
-title: "Prediction Analysis on the U.S. 2020 Election Popular Vote"
+title: "Prediction on U.S. 2020 Election Popular Vote"
 author: "Boyuan Cui, Zhaocheng Li"
 date: "November 2, 2020"
 output:
@@ -9,6 +9,8 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
 library(tidyverse)
 library(knitr)
 
@@ -98,21 +100,6 @@ The reason why we choose these variables is that, we think these factors(age, ge
 
 In order to estimate the proportion of voters who will vote for Donald Trump I need to perform a post-stratification analysis. Here I create cells based off different ages. Using the model described in the previous sub-section I will estimate the proportion of voters in each age bin. I will then weight each proportion estimate (within each bin) by the respective population size of that bin and sum those values and divide that by the entire population size. 
 
-```{r, include=TRUE}
-
-# Here I will perform the post-stratification calculation
-census_data$logodds_estimate <-
-  model %>%
-  predict(newdata = census_data)
-
-census_data$estimate <-
-  exp(census_data$logodds_estimate)/(1+exp(census_data$logodds_estimate))
-
-census_data %>%
-  mutate(alp_predict_prop = estimate*n) %>%
-  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
-  
-```
   
 
 ```{r}
