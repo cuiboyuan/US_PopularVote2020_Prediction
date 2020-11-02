@@ -1,5 +1,5 @@
 ---
-title: "Prediction on U.S. 2020 Election Popular Vote"
+title: "Prediction on U.S. 2020 Presidential Election"
 author: "Boyuan Cui, Zhaocheng Li"
 date: "November 2, 2020"
 output:
@@ -26,29 +26,27 @@ census_data <- read_csv("outputs/census_data.csv")
 
 __Key Words:__ U.S. 2020 Election, Popular Vote, Post-stratification, Logistic Regression
 
-This report is an analysis to predict the popular vote of each candidate in the U.S. 2020 federal election. The analysis employs the post-stratification technique by dividing the data into 838,113 cells according to variable age, gender, state, race, education, and income, and uses the logistic regression model to estimate the proportion of popular vote in each cell. The final result of popular vote proportion prediction is 39.27% for Biden and 38.57% for Trump.
+This report is an analysis to predict the U.S. 2020 federal election. The analysis employs the post-stratification technique by dividing the data into 838,113 cells according to different age, gender, state, race, education, and income. The final result of popular vote proportion prediction is 39.27% for Biden and 38.57% for Trump, and the electoral vote is 301 for Biden and 237 for Trump.
 
 # Introduction
 
-The U.S. presidential election has always been a popular topic of the world for every four year, and as the election day for 2020 comes closer, we are all looking forward to see who will become the next U.S. president. This report is interested in predicting the U.S. 2020 election popular vote for each candidate (Joe Biden and Donald Trump).
-
-We will use the post-stratification technique in our analysis.
+The U.S. presidential election has always been a popular topic of the world for every four year, and as the election day comes closer, we are all looking forward to see who will become the next U.S. president. This report is interested in predicting the U.S. 2020 election popular vote for each candidate (Joe Biden and Donald Trump). We will use the post-stratification technique in our analysis.
 
 # Data
 
 We extract the survey data from Democracy Fund + UCLA Nationscape [1] and the census data from IPUMS USA [2]. We remove all the examples with NA data from these two datasets. 
 
-The survey data is collected on June 25, 2020, and the census data is collected in 2018.
+The survey data is collected on June 25, 2020 [1], and the census data is collected in 2018 [2].
 
 # Model
 
 ## Model Specifics
 
-We choose logistic regression model to estimate the outcome of the presidential election. Because we are trying to find out whether the voter will vote for Trump or Biden in the 2020 election, the outcome is binary so the logistic regression model is more appropriate and suitable in this case. 
+We choose the logistic regression model to estimate the outcome of the presidential election. Because we are trying to find out whether the voter will vote for Trump or Biden in the 2020 election, the outcome is binary, so the logistic regression model is more appropriate and suitable in this case. 
 
-We are using six predictor variables in our model, which are age, race, gender, income level and education level of the voters in each state. These are the representative information in both census and survey dataset. To express the model mathematically, we have:
+We are using six predictor variables in our model, which are age, race, gender, income level and education level. These are the representative information in both census and survey dataset. To express the model mathematically, we have:
 
-$$ \ln(\frac{p}{1-p}) = \beta_0+\beta_1  x_{age} + \beta_2 x_{male} + \beta_3 x_{state} + \beta_4 x_{race} + \beta_5 x_{education} + \beta_6 x_{income} + \epsilon$$
+$$ \log(\frac{p}{1-p}) = \beta_0+\beta_1  x_{age} + \beta_2 x_{male} + \beta_3 x_{state} + \beta_4 x_{race} + \beta_5 x_{education} + \beta_6 x_{income} + \epsilon$$
 
 where $p$ represents the proportion of voters who will vote for Trump/Biden, depending on which model we are using. Value of $\epsilon$ represents the residual of our fit. 
 
@@ -66,7 +64,7 @@ Parameter $\beta_5$ represents the change in logit value by increasing education
 
 Parameter $\beta_6$ represents the change in logit value by increasing income level by 1. Reference table of income level can be found at Appendix Table 4.
 
-Finally, we will fit two models, one for Trump and one for Biden, and we compare the result to predict the winner of 2020 US presidential election.
+Finally, we will fit two models, one for Trump and one for Biden, and we will compare the result to predict the winner of 2020 US presidential election.
 
 Detail of the fitted model can be found at Appendix Table 5 and 6
 ```{r, include=FALSE}
@@ -108,8 +106,8 @@ $$\hat{y}^{PS}=\frac{\sum_j N_j\cdot \hat{y_j} }{\sum_j N_j}$$
 
 where $N_j,\hat{y_j}$ are the total count and model estimate of each cell, respectively.
   
-The result can be found in the Result section.
-```{r}
+The result can be found at Table 1 in the Result section.
+```{r include=FALSE}
 
 # Here I will perform the post-stratification calculation
 # Post-stratification for Trump
@@ -167,7 +165,7 @@ census_data$estimate_BS <-
 
 biden = census_data %>%
   mutate(alp_predict_prop = estimate_BS*n) %>%
-  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n), .groups='drop')
 
 # state 
 state_Trump = census_data %>%
@@ -176,7 +174,7 @@ state_Trump = census_data %>%
 
 state_Biden = data.frame ( census_data %>%
   mutate(alp_predict_prop = estimate_BS*n) %>% group_by(state) %>%
-  summarise(alp_predict = sum(alp_predict_prop)/sum(n)))
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n)), .groups='drop')
 
 
 
@@ -186,47 +184,16 @@ state_Biden = data.frame ( census_data %>%
 
 ## Additional Analysis
 
-In addition to the U.S. national popular vote, We also perform a post-stratification analysis by state. We first remove the variable state from the model and employ the same post-stratification technique with the new model. For the result, instead of two numbers of popular vote proportion in the previous analysis, we have predicted the popular vote proportion of each candidate for every state, which is illustrated by Figure 1, 2, 3 in Result section.Then we apply the winner-takes-all rule of the US election system by distributing all the state's electoral vote to the candidate with higher popular vote at that state [3]. Finally we add up all the electoral votes for each candidate. The result is illustrated in result section.
+In addition to the U.S. national popular vote, We also perform a post-stratification analysis by state. We first remove the variable state from the model and employ the same post-stratification technique on the new model. For the result, instead of two numbers of popular vote proportion in the previous analysis, we have predicted the popular vote proportion of each candidate for every state, which is illustrated by Fig. 1, 2, 3 in Appendix. 
+
+Then we apply the winner-takes-all rule of the U.S. election system by distributing all the state's electoral vote to the candidate with higher popular vote at that state (except for Main and Nebraska which use proportional vote distribution rule) [3]. Finally we add up all the electoral votes for each candidate. The result is illustrated at Table 2 in the Result section.
 
 
 # Results
 
-Here you will include all results. This includes descriptive statistics, graphs, figures, tables, and model results. Please ensure that everything is well formatted and in a report style. You must also provide an explanation of the results in this section. 
-
-Please ensure that everything is well labelled. So if you have multiple histograms and plots, calling them Figure 1, 2, 3, etc. and referencing them as Figure 1, Figure 2, etc. in your report will be expected. The reader should not get lost in a sea of information. Make sure to have the results be clean, well formatted and digestible.
-
 ```{r}
 
-data.frame('Biden(%)'=biden$alp_predict*100, 'Trump(%)'=trump$alp_predict*100)
-
-state_Trump[1:17,] %>%
-ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
-geom_point() +
-
-xlab("2020 Popular Vote Predict") +
-ylab("State") +
-geom_point(data = state_Biden[1:17,], aes(alp_predict, state, color="Biden")) +
-  scale_color_manual(values = c("blue","red")) + ggtitle("Popular Vote of State Alabama-Kansas (Alphabetically)")
-
-
-state_Trump[18:34,] %>%
-ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
-geom_point() +
-
-xlab("2020 Popular Vote Predict") +
-ylab("State") +
-geom_point(data = state_Biden[18:34,], aes(alp_predict, state, color="Biden")) +
-  scale_color_manual(values = c("blue","red")) + ggtitle("Popular Vote of State Kentucky-North Carolina (Alphabetically)")
-
-
-state_Trump[35:51,] %>%
-ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
-geom_point() +
-
-xlab("2020 Popular Vote Predict") +
-ylab("State") +
-geom_point(data = state_Biden[35:51,], aes(alp_predict, state, color="Biden")) +
-  scale_color_manual(values = c("blue","red")) + ggtitle("Popular Vote of State North Dakota-Wyoming (Alphabetically)")
+data.frame('Biden'=biden$alp_predict*100, 'Trump'=trump$alp_predict*100) %>% kable(caption = "Total Popular Vote(%)")
 
 ```
 
@@ -266,11 +233,12 @@ if (sta == 'maine' | sta == 'nebraska'){
   
 }
 
-electoral %>% rename(Stae = state, `Trump Vote`=trump, `Biden Vote`=biden)
-
-data.frame(Biden=electoral$biden %>% sum(), Trump=electoral$trump %>% sum())
-
+data.frame(Biden=electoral$biden %>% sum(), Trump=electoral$trump %>% sum()) %>% kable(caption = 'Total Electoral Vote')
 ```
+
+We estimate the popular vote proportion for Donald Trump is 38.567% and that for Joe Biden is 39.269%. This is based off our post-stratification analysis modelled by logistic regression, which accounted for age, gender, race, state, income, education.
+
+For our additional analysis, we estimate the electoral vote for Donald Trump is 237 and that for Joe Biden is 301. This is based off our post-stratification analysis of states modelled by logistic regression, which accounted for age, gender, race, income, education. Detailed prediction of each state's electoral vote can be found at Table 7 in Appendix.
 
 # Discussion
 
@@ -278,7 +246,7 @@ data.frame(Biden=electoral$biden %>% sum(), Trump=electoral$trump %>% sum())
 
 In our report, we employ the post-stratification technique to predict the popular vote proportion of Biden and Trump. We first clean the census data by splitting the examples into 838,113 cells based on their age, gender, state, race, education level, and income level, which are our explanatory variables. Next we build two logistic regression models with our explanatory variables and use them to estimate the popular vote proportion of Biden and Trump for each cell. Ultimately, with each cell's estimate, we calculate the weighted mean of these estimates, which is our predicted popular vote of Biden and Trump.
 
-We also conduct an analysis on post-stratification by state, that is, we remove the variable state from the model, and calculate the popular vote proportion of each state. The result is illustrated by graph Figure 1, 2, 3.
+We also conduct an analysis on post-stratification by state to find out the electoral vote of each candidate. The result is illustrated by graph Fig. 1, 2, 3 in Appendix.
 
 ## Conclusion
 
@@ -307,24 +275,58 @@ Now that we have analyzes the popular vote through a frequentist approach, we ca
 # Appendix
 
 ```{r}
-edu <- case_when(census_data$education_level==0~"3rd Grade or less",
-                     census_data$education_level==1~"Middle School - Grades 4 - 8",
-                     census_data$education_level==2~"Completed some high school ",
-                     census_data$education_level==3~"High school graduate",
-                     census_data$education_level==4~"Other post high school vocational training",
-                     census_data$education_level==5~"Completed some college, but no degree",
-                     census_data$education_level==6~"Associate Degree",
-                     census_data$education_level==7~"College Degree (such as B.A., B.S.)",
-                     census_data$education_level==8~"Completed some graduate, but no degree",
-                     census_data$education_level==9~"Masters degree",
-                     census_data$education_level==10~"Doctorate degree"
-                     )
-df <- data.frame(Education=edu, Level=census_data$education_level) %>% group_by(Education) %>% summarise(Level = mean(Level))
-df[order(df$Level),]
+
+state_Trump[1:17,] %>%
+ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
+geom_point() +
+
+xlab("2020 Popular Vote Predict") +
+ylab("State") +
+geom_point(data = state_Biden[1:17,], aes(alp_predict, state, color="Biden")) +
+  scale_color_manual(values = c("blue","red")) + ggtitle("Fig.1 Popular Vote of State Alabama-Kansas (Alphabetically)")
 
 
-broom::tidy(model_biden)
-broom::tidy(model_trump)
+state_Trump[18:34,] %>%
+ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
+geom_point() +
+
+xlab("2020 Popular Vote Predict") +
+ylab("State") +
+geom_point(data = state_Biden[18:34,], aes(alp_predict, state, color="Biden")) +
+  scale_color_manual(values = c("blue","red")) + ggtitle("Fig.2 Popular Vote of State Kentucky-North Carolina (Alphabetically)")
+
+
+state_Trump[35:51,] %>%
+ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
+geom_point() +
+
+xlab("2020 Popular Vote Predict") +
+ylab("State") +
+geom_point(data = state_Biden[35:51,], aes(alp_predict, state, color="Biden")) +
+  scale_color_manual(values = c("blue","red")) + ggtitle("Fig.3 Popular Vote of State North Dakota-Wyoming (Alphabetically)")
+
+edu <- c("3rd Grade or less",
+        "Middle School - Grades 4 - 8",
+        "Completed some high school ",
+        "High school graduate",
+        "Other post high school vocational training",
+        "Completed some college, but no degree",
+        "Associate Degree",
+        "College Degree (such as B.A., B.S.)",
+        "Completed some graduate, but no degree",
+        "Masters degree",
+        "Doctorate degree")
+
+df <- data.frame(Education=edu, Level=c(0:10))
+df[order(df$Level),] %>% kable(caption="Educational Level Reference")
+
+df <- data.frame(Income=survey_data$household_income, Level=survey_data$income_level) %>% group_by(Income) %>% summarise(Level = mean(Level), .groups='drop')
+df[order(df$Level),] %>% kable(caption="Income Level Reference")
+
+broom::tidy(model_biden) %>% kable(caption="Popular Vote Logistic Model for Biden")
+broom::tidy(model_trump) %>% kable(caption="Popular Vote Logistic Model for Trump")
+
+electoral %>% rename(State=state, Trump=trump, Biden=biden) %>% kable(caption = "Electoral Vote of Each State")
 ```
 
 
