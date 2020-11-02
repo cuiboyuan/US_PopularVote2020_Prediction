@@ -16,6 +16,4 @@ __01-data_cleaning-survey1.R__ is the code that we used to clean the survey data
 
 __01-data_cleaning-post-strat1.R__ is the code that we used to clean the census data for post-stratification.
 
-__inputs__ folder stores the raw data we extracted from Democracy Fund + UCLA Nationscape and IPUMS USA
-
-__outputs__ folder stores the data after we cleaned the raw data. We have removed the data in both folders because of the license restriction. However, you are welcome to retrieve the data yourself at https://www.voterstudygroup.org/publication/nationscape-data-set and https://usa.ipums.org/usa/
+We have removed the data we used because of the license restriction. However, you are welcome to retrieve the data yourself at https://www.voterstudygroup.org/publication/nationscape-data-set and https://usa.ipums.org/usa/
