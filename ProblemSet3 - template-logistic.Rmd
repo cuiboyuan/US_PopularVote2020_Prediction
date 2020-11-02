@@ -108,34 +108,46 @@ census_data %>%
   
   
   
-```{r, include=TRUE}
+
+
+
+```{r}
 
 # Here I will perform the post-stratification calculation
 # Post-stratification for Trump
-census_data$logodds_estimate <-
+census_data$logodds_estimate_T<-
   model_trump %>%
   predict(newdata = census_data)
 
-census_data$estimate <-
-  exp(census_data$logodds_estimate)/(1+exp(census_data$logodds_estimate))
+census_data$estimate_T <-
+  exp(census_data$logodds_estimate_T)/(1+exp(census_data$logodds_estimate_T))
 
-census_data %>%
-  mutate(alp_predict_prop = estimate*n) %>% group_by(age, gender, state, race, education_level, income_level) %>%
-  summarise(alp_predict = sum(alp_predict_prop)/sum(n),lower = quantile(alp_predict, 0.025),
-upper = quantile(alp_predict, 0.975))
+trump = census_data %>%
+  mutate(alp_predict_prop = estimate*n) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+census_data = mutate(census_data, alp_predict_prop = estimate_T*n)
 
 # Post-stratification for Biden
-census_data$logodds_estimate <-
+
+census_data$logodds_estimate_B <-
   model_biden %>%
   predict(newdata = census_data)
 
-census_data$estimate <-
-  exp(census_data$logodds_estimate)/(1+exp(census_data$logodds_estimate))
+census_data$estimate_B <-
+  exp(census_data$logodds_estimate_B)/(1+exp(census_data$logodds_estimate_B))
 
-census_data %>%
-  mutate(alp_predict_prop = estimate*n) %>% group_by(age, gender, state, race, education_level, income_level) %>%
-  summarise(alp_predict = sum(alp_predict_prop)/sum(n),lower = quantile(alp_predict, 0.025),
-upper = quantile(alp_predict, 0.975))
+biden = census_data %>%
+  mutate(alp_predict_prop = estimate_B*n) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+
+state_Trump = census_data %>%
+  mutate(alp_predict_prop = estimate_T*n) %>% group_by(state) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+
+state_Biden = data.frame ( census_data %>%
+  mutate(alp_predict_prop = estimate_B*n) %>% group_by(state) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n)))
+
 
 
 
@@ -151,6 +163,19 @@ Here you will include all results. This includes descriptive statistics, graphs,
 
 Please ensure that everything is well labelled. So if you have multiple histograms and plots, calling them Figure 1, 2, 3, etc. and referencing them as Figure 1, Figure 2, etc. in your report will be expected. The reader should not get lost in a sea of information. Make sure to have the results be clean, well formatted and digestible.
 
+```{r}
+
+state_Trump %>%
+ggplot(aes(x =alp_predict, y = state, color = "Trump")) +
+geom_point() +
+
+xlab("ALP predict") +
+ylab("State") +
+geom_point(data = state_Biden, aes(alp_predict, state, color = "Biden")) 
+
+
+
+```
 # Discussion
 
 Here you will summarize the previous sections and discuss conclusions drawn from the results. Make sure to elaborate and connect your analysis to the goal of the study.
