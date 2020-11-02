@@ -78,6 +78,11 @@ model_trump <- glm(vote_trump ~ age + gender + state + race + education_level + 
  # Creating the Model
 model_biden <- glm(vote_biden ~ age + gender + state + race + education_level + income_level, 
             data=survey_data, family= "binomial")
+            
+            
+            
+  model_biden_no_state <- glm(vote_biden ~ age + gender + race + education_level + income_level,  data=survey_data, family= "binomial")
+model_trump_no_state  <- glm(vote_trump ~ age + gender + race + education_level + income_level,   data=survey_data, family= "binomial")
 
 # Model Results (to Report in Results section)
 # summary(model)
