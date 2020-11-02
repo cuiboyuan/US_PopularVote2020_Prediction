@@ -115,6 +115,7 @@ census_data %>%
 
 # Here I will perform the post-stratification calculation
 # Post-stratification for Trump
+# Post-stratification for Trump
 census_data$logodds_estimate_T<-
   model_trump %>%
   predict(newdata = census_data)
@@ -123,7 +124,7 @@ census_data$estimate_T <-
   exp(census_data$logodds_estimate_T)/(1+exp(census_data$logodds_estimate_T))
 
 trump = census_data %>%
-  mutate(alp_predict_prop = estimate*n) %>%
+  mutate(alp_predict_prop = estimate_T*n) %>%
   summarise(alp_predict = sum(alp_predict_prop)/sum(n))
 census_data = mutate(census_data, alp_predict_prop = estimate_T*n)
 
