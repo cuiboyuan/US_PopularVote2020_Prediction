@@ -91,6 +91,9 @@ broom::tidy(model_biden)
 broom::tidy(model_trump)
 ```
 
+
+#  We think these factors(age, gender,etc) are the basic voter's informations which are being included in both census and survey dataset, so it might be easier to have access to these factors. Besides, the USA is a melting pot where consists of immigrants and people with various culture from all over the world, so race plays an important role in the election and it should be considered in the prediction model. Finally and the most importantly, all the states in America are classified into 3 categories: blue states, red states and swing states. The majority voters in blue states will choose Democratic party, while red states support Republican party. Two parties normally have silimar amount of votes in swing states. Therefore, we do think state is also a crucial and interesting factor to determine the result of election, so we include it in the model and perform further analysis about this variable.
+
 ## Post-Stratification 
 
 In order to estimate the proportion of voters who will vote for Donald Trump I need to perform a post-stratification analysis. Here I create cells based off different ages. Using the model described in the previous sub-section I will estimate the proportion of voters in each age bin. I will then weight each proportion estimate (within each bin) by the respective population size of that bin and sum those values and divide that by the entire population size. 
