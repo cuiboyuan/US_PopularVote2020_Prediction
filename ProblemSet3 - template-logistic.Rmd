@@ -42,34 +42,33 @@ The survey data is collected on June 25, 2020, and the census data is collected 
 
 # Model
 
-To perform a post-stratification analysis, we need several steps:
-
-First, we need to determine which variables we will use to divide the census data into different cells. In this report, we will use variable age, gender, state, race, education, and income.
-
-Then, we will fit a model using these variables, and we will apply this model to each cell to estimate the probability of voting for a candidate.
-
-To finish up our post-stratification analysis, we will calculate the weighted mean $\hat{y}^{PS}$ of all cells with the formula below:
-
-$$\hat{y}^{PS}=\frac{\sum_j N_j\cdot \hat{y_j} }{\sum_j N_j}$$
-Where $N_j,\hat{y_j}$ are the total count and model estimate of each cell, respectively.
-
 ## Model Specifics
 
-For our model, because each voter either votes or does not vote for one candidate, we are handling binary data. Thus, we will apply the logistic regression model.
+We choose logistic regression model to estimate the outcome of the presidential election. Because we are trying to find out whether the voter will vote for Trump or Biden in the 2020 election, the outcome is binary so the logistic regression model is more appropriate and suitable in this case. 
 
-To analyze the proportion of voters voting for Trump/Biden, we will incorporate our explanatory variables to our model. To express the model mathematically, we have:
+We are using six predictor variables in our model, which are age, race, gender, income level and education level of the voters in each state. These are the representative information in both census and survey dataset. To express the model mathematically, we have:
 
-$$ \ln(\frac{p}{1-p}) = \beta_0+\beta_1  x_{age} + \epsilon$$
+$$ \ln(\frac{p}{1-p}) = \beta_0+\beta_1  x_{age} + \beta_2 x_{male} + \beta_3 x_{state} + \beta_4 x_{race} + \beta_5 x_{education} + \beta_6 x_{income} + \epsilon$$
 
-Where $p$ represents the proportion of voters who will vote for Trump/Biden, depending on which model we are using. Value of $\epsilon$ represents the residual of our fit. Parameter $\beta_0$ represents the intercept of the model, which indicates the value of logit function $\log(\frac{p}{1-p})$ for a 0 year old Alabama female with 3rd grade or less education level and less than $15000 income. 
+where $p$ represents the proportion of voters who will vote for Trump/Biden, depending on which model we are using. Value of $\epsilon$ represents the residual of our fit. 
 
-Additionally, $\beta_1$ represents the slope of the model. So, for everyone one unit increase in age, we expect a $\beta_1$ increase in the probability of voting for Donald Trump.
+Parameter $\beta_0$ represents the intercept of the model, which, in this case, indicates the value of logit function $\log(\frac{p}{1-p})$ for a 0 year old Alabama female with 3rd grade or less education level and less than $15000 income.
 
-We will fit two models with the above formula, one for Trump and one for Biden.
+Parameter $\beta_1$ represents the change in logit value by increasing age by 1.
 
-### # We choose logistic regression model to estimate the outcome of the presidential election. Because we are trying to find out whether the voter will vote for Trump or Biden in the 2020 election, the outcome is binary so the logistic regression model is more appropriate and suitable in this case. All six predictor variables are age, race, gender, income level and education level of the voters in each state. These are the representative informations in both census and survey dataset so that is the reason why we choose them. Finally we perform the model for Biden and Trump individually and then compare one result to another in order to predict the winner in 2020 presidential election.
+Parameter $\beta_2$ represents the change in logit if the example is male. $x_{male}=1$ if subject is male, 0 if subject is female. No other possible values
 
+Parameter $\beta_3$ represents the impact of state on the logit value. We use Alabama as a reference, so all change in logit is comparing with Alabama
 
+Parameter $\beta_4$ represents the impact of race on the logit value. We use white as the reference.
+
+Parameter $\beta_5$ represents the change in logit value by increasing education level by 1. Reference table of education level can be found at Appendix Table 3.
+
+Parameter $\beta_6$ represents the change in logit value by increasing income level by 1. Reference table of income level can be found at Appendix Table 4.
+
+Finally, we will fit two models, one for Trump and one for Biden, and we compare the result to predict the winner of 2020 US presidential election.
+
+Detail of the fitted model can be found at Appendix Table 5 and 6
 ```{r, include=FALSE}
 survey_data = within(survey_data, race <- relevel(as.factor(race), ref = 7)) # make Single marital status as reference
 
@@ -87,7 +86,7 @@ model_biden <- glm(vote_biden ~ age + gender + state + race + education_level + 
             
             
             
-  model_biden_no_state <- glm(vote_biden ~ age + gender + race + education_level + income_level,  data=survey_data, family= "binomial")
+model_biden_no_state <- glm(vote_biden ~ age + gender + race + education_level + income_level,  data=survey_data, family= "binomial")
 model_trump_no_state  <- glm(vote_trump ~ age + gender + race + education_level + income_level,   data=survey_data, family= "binomial")
 
 # Model Results (to Report in Results section)
@@ -95,16 +94,21 @@ model_trump_no_state  <- glm(vote_trump ~ age + gender + race + education_level 
 # OR
 ```
 
-## Why we choose these variables
+## Post-Stratification
 
-The reason why we choose these variables is that, we think these factors(age, gender,etc) are the basic voter's information which are being included in both census and survey dataset, so it might be easier to have access to these factors. Besides, the USA is a melting pot that consists of immigrants and people with various culture background from all over the world, so race plays an important role in the election and it should be considered in the prediction model. Finally and the most importantly, historically, all the states in America can be classified into 3 categories: blue states, red states and swing states. The majority voters in blue states will choose Democratic party, while red states support Republican party. Two parties normally have similar amount of votes in swing states. Therefore, we do think that state is also a crucial and interesting factor to determine the result of election; hence, we include it in the model as well and perform further analysis about this variable.
+To estimate the popular vote for Biden and Trump, we will employ a post-stratification analysis.
 
-## Post-Stratification 
+To use the post-stratification technique, we will first divide the data into cells based on different age, gender, state, race, education, and income.
 
-In order to estimate the proportion of voters who will vote for Donald Trump I need to perform a post-stratification analysis. Here I create cells based off different ages. Using the model described in the previous sub-section I will estimate the proportion of voters in each age bin. I will then weight each proportion estimate (within each bin) by the respective population size of that bin and sum those values and divide that by the entire population size. 
+The reason why we choose these variables is that, we think these factors(age, gender,etc) are the basic voter's information which are being included in both census and survey dataset, so it might be easier to have access to these factors. Besides, the USA is a melting pot that consists of immigrants and people with various culture background from all over the world, so race plays an important role in the election and it should be considered into the analysis. Finally and the most importantly, historically, all the states in America could be classified into 3 categories: blue states, red states and swing states. The majority voters in blue states will choose Democratic party, while red states support Republican party. Two parties normally have similar amount of votes in swing states. Therefore, we think that state is also a crucial and interesting factor to determine the result of election; hence, we include it in the analysis.
 
+Next, we apply the model fitted above to each cell to estimate the popular vote proportion for each candidate. To finish up our post-stratification analysis, we will calculate the weighted mean $\hat{y}^{PS}$ of all cells for each candidate with the formula below:
+
+$$\hat{y}^{PS}=\frac{\sum_j N_j\cdot \hat{y_j} }{\sum_j N_j}$$
+
+where $N_j,\hat{y_j}$ are the total count and model estimate of each cell, respectively.
   
-
+The result can be found in the Result section.
 ```{r}
 
 # Here I will perform the post-stratification calculation
@@ -178,6 +182,11 @@ state_Biden = data.frame ( census_data %>%
 
 
 ```
+
+
+## Additional Analysis
+
+In addition to the U.S. national popular vote, We also perform a post-stratification analysis by state. We first remove the variable state from the model and employ the same post-stratification technique with the new model. For the result, instead of two numbers of popular vote proportion in the previous analysis, we have predicted the popular vote proportion of each candidate for every state, which is illustrated by Figure 1, 2, 3 in Result section.Then we apply the winner-takes-all rule of the US election system by distributing all the state's electoral vote to the candidate with higher popular vote at that state [3]. Finally we add up all the electoral votes for each candidate. The result is illustrated in result section.
 
 
 # Results
@@ -269,9 +278,13 @@ data.frame(Biden=electoral$biden %>% sum(), Trump=electoral$trump %>% sum())
 
 In our report, we employ the post-stratification technique to predict the popular vote proportion of Biden and Trump. We first clean the census data by splitting the examples into 838,113 cells based on their age, gender, state, race, education level, and income level, which are our explanatory variables. Next we build two logistic regression models with our explanatory variables and use them to estimate the popular vote proportion of Biden and Trump for each cell. Ultimately, with each cell's estimate, we calculate the weighted mean of these estimates, which is our predicted popular vote of Biden and Trump.
 
+We also conduct an analysis on post-stratification by state, that is, we remove the variable state from the model, and calculate the popular vote proportion of each state. The result is illustrated by graph Figure 1, 2, 3.
+
 ## Conclusion
 
 We predict that the popular vote in 2020 election is 39.269% for Joe Biden and 38.567% for Donald Trump. Although Biden has a higher popular vote, it does not necessarily mean that he is going to win, because in the US election system, the popular vote does not determine the winner, and actually candidate with less popular vote has become the president several times in the history [3]. 
+
+What actually determines the winner is the electoral vote. Each state has certain number of electoral votes, and if one candidate has more state popular vote than the other, the leading candidate takes all the electoral vote of that state [3]. Therefore, the result in Table 2 determines the winner. As we can see, Joe Biden has more electoral votes than Donald Trump has (301 > 237), so we predict that Joe Biden will win the 2020 presidential election.
 
 ## Weakness
 
