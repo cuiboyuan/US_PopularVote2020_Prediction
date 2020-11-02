@@ -67,6 +67,9 @@ Additionally, $\beta_1$ represents the slope of the model. So, for everyone one 
 
 We will fit two models with the above formula, one for Trump and one for Biden.
 
+### # We choose logistic regression model to estimate the outcome of the presidential election. Because we are trying to find out whether the voter will vote for Trump or Biden in the 2020 election, the outcome is binary so the logistic regression model is more appropriate and suitable in this case. All six predictor variables are age, race, gender, income level and education level of the voters in each state. These are the representative informations in both census and survey dataset so that is the reason why we choose them. Finally we perform the model for Biden and Trump individually and then compare one result to another in order to predict the winner in 2020 presidential election.
+
+
 ```{r, include=FALSE}
 survey_data = within(survey_data, race <- relevel(as.factor(race), ref = 7)) # make Single marital status as reference
 
