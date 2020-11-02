@@ -2,7 +2,7 @@
 # Purpose: Prepare and clean the survey data downloaded from https://www.voterstudygroup.org/publication/nationscape-data-set
 # Author: Boyuan Cui, Zhaocheng Li
 # Data: October 31, 2020
-# Contact: 
+# Contact: boyuanbryan.cui@mail.utoronto.ca, zhaocheng.li@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
 # - Need to have downloaded the data from VoterStudyGroup and save to the folder inputs/data 
@@ -36,11 +36,6 @@ reduced_data <-
          congress_district,
          age)
 
-
-#### What else???? ####
-# Maybe make some age-groups?
-# Maybe check the values?
-# Is vote a binary? If not, what are you going to do?
 
 ## Remove n/a data
 reduced_data <- reduced_data %>% na.omit()

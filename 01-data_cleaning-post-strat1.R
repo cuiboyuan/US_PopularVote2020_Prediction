@@ -2,7 +2,7 @@
 # Purpose: Prepare and clean the survey data downloaded from https://usa.ipums.org/usa/index.shtml
 # Author: Boyuan Cui, Zhaocheng Li
 # Data: October 31, 2020
-# Contact: 
+# Contact: boyuanbryan.cui@mail.utoronto.ca, zhaocheng.li@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
 # - Need to have downloaded the IPUMS USA data and saved it to inputs/census_data
