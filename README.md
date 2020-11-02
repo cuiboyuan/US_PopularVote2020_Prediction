@@ -10,7 +10,7 @@ In addition to popular vote, we also analyze the popular vote proportion for eac
 
 __xxx.pdf__ is the final report of our prediction
 
-__xxx.Rmd__ is the code that helps us to generate the report
+__xxx.Rmd__ is the code we use to generate the report
 
 __01-data_cleaning-survey1.R__ is the code that we used to clean the survey data for logistic model.
 
