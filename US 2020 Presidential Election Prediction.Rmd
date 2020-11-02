@@ -34,9 +34,9 @@ The U.S. presidential election has always been a popular topic of the world for 
 
 # Data
 
-We extract the survey data from Democracy Fund + UCLA Nationscape [1] and the census data from IPUMS USA [2]. We remove all the examples with NA data from these two datasets. 
+We extract the survey data from Democracy Fund + UCLA Nationscape __[1]__ and the census data from IPUMS USA __[2]__. We remove all the examples with N/A data from these two datasets. 
 
-The survey data is collected on June 25, 2020 [1], and the census data is collected in 2018 [2].
+The survey data is collected on June 25, 2020 __[1]__, and the census data is collected in 2018 __[2]__.
 
 # Model
 
@@ -186,7 +186,7 @@ state_Biden = data.frame ( census_data %>%
 
 In addition to the U.S. national popular vote, We also perform a post-stratification analysis by state. We first remove the variable state from the model and employ the same post-stratification technique on the new model. For the result, instead of two numbers of popular vote proportion in the previous analysis, we have predicted the popular vote proportion of each candidate for every state, which is illustrated by Fig. 1, 2, 3 in Appendix. 
 
-Then we apply the winner-takes-all rule of the U.S. election system by distributing all the state's electoral vote to the candidate with higher popular vote at that state (except for Main and Nebraska which use proportional vote distribution rule) [3]. Finally we add up all the electoral votes for each candidate. The result is illustrated at Table 2 in the Result section.
+Then we apply the winner-takes-all rule of the U.S. election system by distributing all the state's electoral vote to the candidate with higher popular vote at that state (except for Main and Nebraska which use proportional vote distribution rule) __[3]__. Finally we add up all the electoral votes for each candidate. The result is illustrated at Table 2 in the Result section.
 
 
 # Results
@@ -250,27 +250,31 @@ We also conduct an analysis on post-stratification by state to find out the elec
 
 ## Conclusion
 
-We predict that the popular vote in 2020 election is 39.269% for Joe Biden and 38.567% for Donald Trump. Although Biden has a higher popular vote, it does not necessarily mean that he is going to win, because in the US election system, the popular vote does not determine the winner, and actually candidate with less popular vote has become the president several times in the history [3]. 
+We predict that the popular vote in 2020 election is 39.269% for Joe Biden and 38.567% for Donald Trump. Although Biden has a higher popular vote, it does not necessarily mean that he is going to win, because in the US election system, the popular vote does not determine the winner, and actually candidate with less popular vote has become the president several times in the history __[3]__. 
 
-What actually determines the winner is the electoral vote. Each state has certain number of electoral votes, and if one candidate has more state popular vote than the other, the leading candidate takes all the electoral vote of that state [3]. Therefore, the result in Table 2 determines the winner. As we can see, Joe Biden has more electoral votes than Donald Trump has (301 > 237), so we predict that Joe Biden will win the 2020 presidential election.
+What actually determines the winner is the electoral vote. Each state has certain number of electoral votes, and if one candidate has more state popular vote than the other, the leading candidate takes all the electoral vote of that state __[3]__. Therefore, the result in Table 2 determines the winner. As we can see, Joe Biden has more electoral votes than Donald Trump has (301 > 237), so we predict that Joe Biden will win the 2020 presidential election.
 
 ## Weakness
 
 One of the major drawback of our analysis is that the survey data is outdated. The survey is conducted at June 25, 2020, but the election day is at November 3, 2020. Multiple major events had happened during this period, such as Donald Trump getting infected by COVID-19 and two presidential debates. These events could potentially change American people's opinion and hence affect the vote result.
 
+Another weakness is that we include all people in our analysis, including people less than 18 years old, who are not eligible to vote __[4]__. They do not contribute to the final vote outcome of our prediction. However, we do not have enough data to estimate the popular vote of the entire American Population, so removing these examples will shrink our sample size, and hence we could have even more biased prediction. There is a trade-off here between removing irrelavent data and large sample size.
+
 The other weakness would be the small cell counts. When we divide the data into cells, there are many cells with small counts. These cells could bring uncertainties to the prediction and hence become problematic.
 
 ## Next Steps
 
-Now that we have analyzes the popular vote through a frequentist approach, we can complicate the model to minimize the uncertainty brought by the small cell counts. One of the common way to deal with uncertainties is the Bayesian approach. We may consider to build a Bayesian logistic model for deeper analysis.
+Now that we have analyzes the popular vote through a frequentist approach, we can complicate the model to minimize the uncertainty brought by both the small cell counts and small sample size. One of the common way to deal with uncertainties is the Bayesian approach. We may consider to build a Bayesian logistic model for deeper analysis.
 
 # References
 
-[1] Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from https://www.voterstudygroup.org/publication/nationscape-data-set.
+__[1]__ Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from https://www.voterstudygroup.org/publication/nationscape-data-set.
 
-[2] Steven Ruggles, Sarah Flood, Ronald Goeken, Josiah Grover, Erin Meyer, Jose Pacas and Matthew Sobek. IPUMS USA: Version 10.0 [dataset]. Minneapolis, MN: IPUMS, 2020. https://doi.org/10.18128/D010.V10.0
+__[2]__ Steven Ruggles, Sarah Flood, Ronald Goeken, Josiah Grover, Erin Meyer, Jose Pacas and Matthew Sobek. IPUMS USA: Version 10.0 [dataset]. Minneapolis, MN: IPUMS, 2020. https://doi.org/10.18128/D010.V10.0
 
-[3] Presidential Election Process. (2020). In USA.gov. Retrieved November 2, 2020, from https://www.usa.gov/election
+__[3]__ Presidential Election Process. (2020). In USA.gov. Retrieved November 2, 2020 from https://www.usa.gov/election
+
+__[4]__ Who Can and Can’t Vote in U.S. Elections. (2020). In USA.gov. Retrieved November 2, 2020 from https://www.usa.gov/who-can-vote
 
 # Appendix
 

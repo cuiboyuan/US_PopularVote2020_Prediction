@@ -47,7 +47,6 @@ reduced_data$age <-
 
 reduced_data$age <- as.integer(reduced_data$age)
 
-
 attach(reduced_data)
 
 ## Convert education to numeric value of education level
