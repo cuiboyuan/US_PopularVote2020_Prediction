@@ -120,7 +120,7 @@ census_data$estimate <-
   exp(census_data$logodds_estimate)/(1+exp(census_data$logodds_estimate))
 
 census_data %>%
-  mutate(alp_predict_prop = estimate*n) %>% group_by(age) %>%
+  mutate(alp_predict_prop = estimate*n) %>% group_by(age, gender, state, race, education_level, income_level) %>%
   summarise(alp_predict = sum(alp_predict_prop)/sum(n),lower = quantile(alp_predict, 0.025),
 upper = quantile(alp_predict, 0.975))
 
@@ -133,7 +133,7 @@ census_data$estimate <-
   exp(census_data$logodds_estimate)/(1+exp(census_data$logodds_estimate))
 
 census_data %>%
-  mutate(alp_predict_prop = estimate*n) %>% group_by(age) %>%
+  mutate(alp_predict_prop = estimate*n) %>% group_by(age, gender, state, race, education_level, income_level) %>%
   summarise(alp_predict = sum(alp_predict_prop)/sum(n),lower = quantile(alp_predict, 0.025),
 upper = quantile(alp_predict, 0.975))
 
