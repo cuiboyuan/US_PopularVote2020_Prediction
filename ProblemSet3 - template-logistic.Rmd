@@ -10,6 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(knitr)
 
 # Loading in the cleaned survey Data
 survey_data <- read_csv("outputs/survey_data.csv")
@@ -87,8 +88,6 @@ model_trump_no_state  <- glm(vote_trump ~ age + gender + race + education_level 
 # Model Results (to Report in Results section)
 # summary(model)
 # OR
-broom::tidy(model_biden)
-broom::tidy(model_trump)
 ```
 
 ## Why we choose these variables
@@ -115,10 +114,6 @@ census_data %>%
   
 ```
   
-  
-  
-
-
 
 ```{r}
 
@@ -203,6 +198,8 @@ Please ensure that everything is well labelled. So if you have multiple histogra
 
 ```{r}
 
+data.frame('Biden(%)'=biden$alp_predict*100, 'Trump(%)'=trump$alp_predict*100)
+
 state_Trump[1:17,] %>%
 ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
 geom_point() +
@@ -233,6 +230,49 @@ geom_point(data = state_Biden[35:51,], aes(alp_predict, state, color="Biden")) +
   scale_color_manual(values = c("blue","red")) + ggtitle("Popular Vote of State North Dakota-Wyoming (Alphabetically)")
 
 ```
+
+```{r}
+voters <- c(9,3,11,6,55,9,7,3,3,29,16,4,4,20,11,6,6,8,8,4,10,11,16,10,6,10,3,5,6,4,14,5,29,15,3,18,7,7,20,4,9,3,11,38,6,3,13,12,5,10,3)
+
+electoral <- data.frame(state=state_Trump$state, trump=rep(0, 51), biden=rep(0, 51))
+
+for (i in 1:51){
+sta = state_Trump$state[i]
+elector = voters[i]
+
+if (sta == 'maine' | sta == 'nebraska'){
+  joe = (elector * state_Biden$alp_predict[i]) %>% round()
+  donald = (elector * state_Trump$alp_predict[i]) %>% round()
+  
+  if ((joe + donald)!=elector){
+    if (state_Biden$alp_predict[i] > state_Trump$alp_predict[i]){
+      electoral$biden[i] <- joe + 1
+      electoral$trump[i] <- donald
+    } else {
+      electoral$trump[i] <- donald + 1
+      electoral$biden[i] <- joe
+    }
+  } else {
+      electoral$biden[i] <- joe
+      electoral$trump[i] <- donald
+  }
+  
+} else {
+  if (state_Biden$alp_predict[i] > state_Trump$alp_predict[i]){
+    electoral$biden[i] <- elector
+  } else {
+    electoral$trump[i] <- elector
+  }
+}
+  
+}
+
+electoral %>% rename(Stae = state, `Trump Vote`=trump, `Biden Vote`=biden)
+
+data.frame(Biden=electoral$biden %>% sum(), Trump=electoral$trump %>% sum())
+
+```
+
 # Discussion
 
 ## Summary
@@ -260,5 +300,28 @@ Now that we have analyzes the popular vote through a frequentist approach, we ca
 [2] Steven Ruggles, Sarah Flood, Ronald Goeken, Josiah Grover, Erin Meyer, Jose Pacas and Matthew Sobek. IPUMS USA: Version 10.0 [dataset]. Minneapolis, MN: IPUMS, 2020. https://doi.org/10.18128/D010.V10.0
 
 [3] Presidential Election Process. (2020). In USA.gov. Retrieved November 2, 2020, from https://www.usa.gov/election
+
+# Appendix
+
+```{r}
+edu <- case_when(census_data$education_level==0~"3rd Grade or less",
+                     census_data$education_level==1~"Middle School - Grades 4 - 8",
+                     census_data$education_level==2~"Completed some high school ",
+                     census_data$education_level==3~"High school graduate",
+                     census_data$education_level==4~"Other post high school vocational training",
+                     census_data$education_level==5~"Completed some college, but no degree",
+                     census_data$education_level==6~"Associate Degree",
+                     census_data$education_level==7~"College Degree (such as B.A., B.S.)",
+                     census_data$education_level==8~"Completed some graduate, but no degree",
+                     census_data$education_level==9~"Masters degree",
+                     census_data$education_level==10~"Doctorate degree"
+                     )
+df <- data.frame(Education=edu, Level=census_data$education_level) %>% group_by(Education) %>% summarise(Level = mean(Level))
+df[order(df$Level),]
+
+
+broom::tidy(model_biden)
+broom::tidy(model_trump)
+```
 
 
