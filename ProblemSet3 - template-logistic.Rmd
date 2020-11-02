@@ -23,11 +23,11 @@ census_data <- read_csv("outputs/census_data.csv")
 
 __Key Words:__ U.S. 2020 Election, Popular Vote, Post-stratification, Logistic Regression
 
-This report is an analysis to predict the outcome of U.S. 2020 federal election popular vote for Joe Biden and Donald Trump. The analysis employs the post-stratification technique by dividing the data into (number) cells according to variable age, and uses the logistic regression model to estimate the proportion of popular vote in each cell. The final result of popular vote proportion prediction is (result) for Biden and (result) for Trump.
+This report is an analysis to predict the popular vote of each candidate in the U.S. 2020 federal election. The analysis employs the post-stratification technique by dividing the data into 838,113 cells according to variable age, gender, state, race, education, and income, and uses the logistic regression model to estimate the proportion of popular vote in each cell. The final result of popular vote proportion prediction is 39.27% for Biden and 38.57% for Trump.
 
 # Introduction
 
-The U.S. presidential election has always been a popular topic of the world for every four year, and as the election day for 2020 comes closer, we are all looking forward to see who will become the next U.S. president. This report is interested in predicting the U.S. 2020 election popular vote for each candidate (Joe Bide and Donald Trump).
+The U.S. presidential election has always been a popular topic of the world for every four year, and as the election day for 2020 comes closer, we are all looking forward to see who will become the next U.S. president. This report is interested in predicting the U.S. 2020 election popular vote for each candidate (Joe Biden and Donald Trump).
 
 We will use the post-stratification technique in our analysis.
 
@@ -41,7 +41,7 @@ The survey data is collected on June 25, 2020, and the census data is collected 
 
 To perform a post-stratification analysis, we need several steps:
 
-First, we need to determine which variables we will use to divide the census data into different cells. In this report, we will use variable (vars)
+First, we need to determine which variables we will use to divide the census data into different cells. In this report, we will use variable age, gender, state, race, education, and income.
 
 Then, we will fit a model using these variables, and we will apply this model to each cell to estimate the probability of voting for a candidate.
 
@@ -54,11 +54,11 @@ Where $N_j,\hat{y_j}$ are the total count and model estimate of each cell, respe
 
 For our model, because each voter either votes or does not vote for one candidate, we are handling binary data. Thus, we will apply the logistic regression model.
 
-To analyze the proportion of voters voting for Trump/Biden, we will incorporate variables (vars) to our model. To express the model mathematically, we have:
+To analyze the proportion of voters voting for Trump/Biden, we will incorporate our explanatory variables to our model. To express the model mathematically, we have:
 
 $$ \ln(\frac{p}{1-p}) = \beta_0+\beta_1  x_{age} + \epsilon$$
 
-Where $p$ represents the proportion of voters who will vote for Trump/Biden, depending on which model we are using. Value of $\epsilon$ represents the residual of our fit. Parameter $\beta_0$ represents the intercept of the model, which indicates the value of logit function $\log(\frac{p}{1-p})$ when (...). 
+Where $p$ represents the proportion of voters who will vote for Trump/Biden, depending on which model we are using. Value of $\epsilon$ represents the residual of our fit. Parameter $\beta_0$ represents the intercept of the model, which indicates the value of logit function $\log(\frac{p}{1-p})$ for a 0 year old Alabama female with 3rd grade or less education level and less than $15000 income. 
 
 Additionally, $\beta_1$ represents the slope of the model. So, for everyone one unit increase in age, we expect a $\beta_1$ increase in the probability of voting for Donald Trump.
 
@@ -91,8 +91,9 @@ broom::tidy(model_biden)
 broom::tidy(model_trump)
 ```
 
+## Why we choose these variables
 
-#  We think these factors(age, gender,etc) are the basic voter's informations which are being included in both census and survey dataset, so it might be easier to have access to these factors. Besides, the USA is a melting pot where consists of immigrants and people with various culture from all over the world, so race plays an important role in the election and it should be considered in the prediction model. Finally and the most importantly, all the states in America are classified into 3 categories: blue states, red states and swing states. The majority voters in blue states will choose Democratic party, while red states support Republican party. Two parties normally have silimar amount of votes in swing states. Therefore, we do think state is also a crucial and interesting factor to determine the result of election, so we include it in the model and perform further analysis about this variable.
+The reason why we choose these variables is that, we think these factors(age, gender,etc) are the basic voter's information which are being included in both census and survey dataset, so it might be easier to have access to these factors. Besides, the USA is a melting pot that consists of immigrants and people with various culture background from all over the world, so race plays an important role in the election and it should be considered in the prediction model. Finally and the most importantly, historically, all the states in America can be classified into 3 categories: blue states, red states and swing states. The majority voters in blue states will choose Democratic party, while red states support Republican party. Two parties normally have similar amount of votes in swing states. Therefore, we do think that state is also a crucial and interesting factor to determine the result of election; hence, we include it in the model as well and perform further analysis about this variable.
 
 ## Post-Stratification 
 
@@ -202,34 +203,62 @@ Please ensure that everything is well labelled. So if you have multiple histogra
 
 ```{r}
 
-state_Trump %>%
-ggplot(aes(x =alp_predict, y = state, color = "Trump")) +
+state_Trump[1:17,] %>%
+ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
 geom_point() +
 
-xlab("ALP predict") +
+xlab("2020 Popular Vote Predict") +
 ylab("State") +
-geom_point(data = state_Biden, aes(alp_predict, state, color = "Biden")) 
+geom_point(data = state_Biden[1:17,], aes(alp_predict, state, color="Biden")) +
+  scale_color_manual(values = c("blue","red")) + ggtitle("Popular Vote of State Alabama-Kansas (Alphabetically)")
 
 
+state_Trump[18:34,] %>%
+ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
+geom_point() +
+
+xlab("2020 Popular Vote Predict") +
+ylab("State") +
+geom_point(data = state_Biden[18:34,], aes(alp_predict, state, color="Biden")) +
+  scale_color_manual(values = c("blue","red")) + ggtitle("Popular Vote of State Kentucky-North Carolina (Alphabetically)")
+
+
+state_Trump[35:51,] %>%
+ggplot(aes(x =alp_predict, y = state, color="Trump")) + 
+geom_point() +
+
+xlab("2020 Popular Vote Predict") +
+ylab("State") +
+geom_point(data = state_Biden[35:51,], aes(alp_predict, state, color="Biden")) +
+  scale_color_manual(values = c("blue","red")) + ggtitle("Popular Vote of State North Dakota-Wyoming (Alphabetically)")
 
 ```
 # Discussion
 
-Here you will summarize the previous sections and discuss conclusions drawn from the results. Make sure to elaborate and connect your analysis to the goal of the study.
+## Summary
 
-## Weaknesses
+In our report, we employ the post-stratification technique to predict the popular vote proportion of Biden and Trump. We first clean the census data by splitting the examples into 838,113 cells based on their age, gender, state, race, education level, and income level, which are our explanatory variables. Next we build two logistic regression models with our explanatory variables and use them to estimate the popular vote proportion of Biden and Trump for each cell. Ultimately, with each cell's estimate, we calculate the weighted mean of these estimates, which is our predicted popular vote of Biden and Trump.
 
-Here we discuss weaknesses of the study, data, analysis, etc. You can also discuss areas for improvement.
+## Conclusion
+
+We predict that the popular vote in 2020 election is 39.269% for Joe Biden and 38.567% for Donald Trump. Although Biden has a higher popular vote, it does not necessarily mean that he is going to win, because in the US election system, the popular vote does not determine the winner, and actually candidate with less popular vote has become the president several times in the history [3]. 
+
+## Weakness
+
+One of the major drawback of our analysis is that the survey data is outdated. The survey is conducted at June 25, 2020, but the election day is at November 3, 2020. Multiple major events had happened during this period, such as Donald Trump getting infected by COVID-19 and two presidential debates. These events could potentially change American people's opinion and hence affect the vote result.
+
+The other weakness would be the small cell counts. When we divide the data into cells, there are many cells with small counts. These cells could bring uncertainties to the prediction and hence become problematic.
 
 ## Next Steps
 
-Here you discuss subsequent work to be done after this report. This can include next steps in terms of statistical analysis (perhaps there is a more efficient algorithm available, or perhaps there is a caveat in the data that would allow for some new technique). Future steps should also be specified in terms of the study setting (eg. including a follow-up survey on something, or a subsequent study that would complement the conclusions of your report).
-
+Now that we have analyzes the popular vote through a frequentist approach, we can complicate the model to minimize the uncertainty brought by the small cell counts. One of the common way to deal with uncertainties is the Bayesian approach. We may consider to build a Bayesian logistic model for deeper analysis.
 
 # References
 
 [1] Tausanovitch, Chris and Lynn Vavreck. 2020. Democracy Fund + UCLA Nationscape, October 10-17, 2019 (version 20200814). Retrieved from https://www.voterstudygroup.org/publication/nationscape-data-set.
 
 [2] Steven Ruggles, Sarah Flood, Ronald Goeken, Josiah Grover, Erin Meyer, Jose Pacas and Matthew Sobek. IPUMS USA: Version 10.0 [dataset]. Minneapolis, MN: IPUMS, 2020. https://doi.org/10.18128/D010.V10.0
+
+[3] Presidential Election Process. (2020). In USA.gov. Retrieved November 2, 2020, from https://www.usa.gov/election
 
 
