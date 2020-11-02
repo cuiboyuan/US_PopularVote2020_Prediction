@@ -141,16 +141,44 @@ biden = census_data %>%
   mutate(alp_predict_prop = estimate_B*n) %>%
   summarise(alp_predict = sum(alp_predict_prop)/sum(n))
 
+
+
+
+
+# Post-stratification for Trump no state
+census_data$logodds_estimate_TS<-
+  model_trump_no_state %>%
+  predict(newdata = census_data)
+
+census_data$estimate_TS <-
+  exp(census_data$logodds_estimate_TS)/(1+exp(census_data$logodds_estimate_TS))
+
+trumps = census_data %>%
+  mutate(alp_predict_prop = estimate_TS*n) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+census_data = mutate(census_data, alp_predict_prop = estimate_TS*n)
+
+# Post-stratification for Biden no state
+
+census_data$logodds_estimate_BS <-
+  model_biden_no_state %>%
+  predict(newdata = census_data)
+
+census_data$estimate_BS <-
+  exp(census_data$logodds_estimate_BS)/(1+exp(census_data$logodds_estimate_BS))
+
+biden = census_data %>%
+  mutate(alp_predict_prop = estimate_BS*n) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+
+# state 
 state_Trump = census_data %>%
-  mutate(alp_predict_prop = estimate_T*n) %>% group_by(state) %>%
+  mutate(alp_predict_prop = estimate_TS*n) %>% group_by(state) %>%
   summarise(alp_predict = sum(alp_predict_prop)/sum(n))
 
 state_Biden = data.frame ( census_data %>%
-  mutate(alp_predict_prop = estimate_B*n) %>% group_by(state) %>%
+  mutate(alp_predict_prop = estimate_BS*n) %>% group_by(state) %>%
   summarise(alp_predict = sum(alp_predict_prop)/sum(n)))
-
-
-
 
 
 
