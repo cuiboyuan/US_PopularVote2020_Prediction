@@ -4,6 +4,8 @@
 
 This is a statistical report on predicting the popular vote in U.S. 2020 election for each candidate. We employ the post-stratification technique and incorporate variable age, gender, state, race, education, and income into our analysis.
 
+In addition to popular vote, we also analyze the popular vote proportion for each state by post-stratification.
+
 ## Files
 
 __xxx.pdf__ is the final report of our prediction
