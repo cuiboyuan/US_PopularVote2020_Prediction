@@ -103,6 +103,43 @@ census_data$estimate <-
 census_data %>%
   mutate(alp_predict_prop = estimate*n) %>%
   summarise(alp_predict = sum(alp_predict_prop)/sum(n))
+  
+```
+  
+  
+  
+```{r, include=TRUE}
+
+# Here I will perform the post-stratification calculation
+# Post-stratification for Trump
+census_data$logodds_estimate <-
+  model_trump %>%
+  predict(newdata = census_data)
+
+census_data$estimate <-
+  exp(census_data$logodds_estimate)/(1+exp(census_data$logodds_estimate))
+
+census_data %>%
+  mutate(alp_predict_prop = estimate*n) %>% group_by(age) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n),lower = quantile(alp_predict, 0.025),
+upper = quantile(alp_predict, 0.975))
+
+# Post-stratification for Biden
+census_data$logodds_estimate <-
+  model_biden %>%
+  predict(newdata = census_data)
+
+census_data$estimate <-
+  exp(census_data$logodds_estimate)/(1+exp(census_data$logodds_estimate))
+
+census_data %>%
+  mutate(alp_predict_prop = estimate*n) %>% group_by(age) %>%
+  summarise(alp_predict = sum(alp_predict_prop)/sum(n),lower = quantile(alp_predict, 0.025),
+upper = quantile(alp_predict, 0.975))
+
+
+
+
 
 
 ```
