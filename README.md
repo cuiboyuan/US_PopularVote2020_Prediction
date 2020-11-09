@@ -8,7 +8,7 @@ In addition to popular vote, we also analyze the popular vote proportion for eac
 
 ## Files
 
-__US 2020 Presidential Election Prediction.pdf__ is the final report of our prediction
+__US-2020-Presidential-Election-Prediction.pdf__ is the final report of our prediction
 
 __US 2020 Presidential Election Prediction.Rmd__ is the code we use to generate the report
 
